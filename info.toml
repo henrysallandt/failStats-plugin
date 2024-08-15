@@ -1,0 +1,8 @@
+[meta]
+name        = "Fail Stats"
+author      = "Salzwiese"
+category    = "Tracking"
+version     = "1.0.0"
+
+[script]
+dependencies = [ "VehicleState" ]
