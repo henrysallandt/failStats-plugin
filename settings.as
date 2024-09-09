@@ -108,7 +108,7 @@ void RenderFailDataReset(){
     if (UI::Button("Reset fail data on this map.")){
         UI::ShowNotification("Cleared fail statistic for current map", 5000);
         FS::reset_data(true, false);
-        IO::Delete(FS::folder + get_mapId() + ".json");
+        IO::Delete(IO::FromStorageFolder(get_mapId() + ".json"));
         FS::reset_variablesWhenResetting();
     }
 }
@@ -116,7 +116,7 @@ void RenderPersonalBestDataReset(){
     if (UI::Button("Reset personal best data on this map.")){
         UI::ShowNotification("Cleared personal best data for current map", 5000);
         FS::reset_data(false, true);
-        IO::Delete(FS::folder + get_mapId() + ".json");
+        IO::Delete(IO::FromStorageFolder(get_mapId() + ".json"));
         FS::reset_variablesWhenResetting();
     }
 }

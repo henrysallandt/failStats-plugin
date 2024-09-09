@@ -6,18 +6,15 @@ namespace FS {
     bool _inGame = false;
     uint _currentCP = 0;
     uint _maxCP = 0;
-    string _baseFolder = IO::FromDataFolder('');
-    string _folder = _baseFolder + 'Fail Stats/';
     
     
 
     bool get_inGame() property { return _inGame; }
     uint get_currentCP() property { return _currentCP; }
     uint get_maxCP() property { return _maxCP; }
-    string get_folder() property { return _folder; }
     uint get_finishes() property { return statistics._finishes; }
 
-    const string appVersion = "1.0";
+    const string appVersion = "1.0.0"; // I did not succeed in referencing the version from info.toml
 
     uint _preCPIdx = 0;
 	uint _preLapStartTime = 0;
@@ -96,6 +93,7 @@ namespace FS {
             // Setting handledRespawn to true to avoid adding one fail when loading into the map.
             _handledRespawn = true;
             _readFileSuccessfully = false;
+            _inGame = true;
         }
         
         if (tooManyCheckpoints){
@@ -139,6 +137,7 @@ namespace FS {
         MwFastBuffer<CGameScriptMapLandmark@> landmarks = playground.Arena.MapLandmarks;
         if (!_inGame){
             if (!_readFileSuccessfully){
+                // if there is no file to read or there has been an error while reading
                 _maxCP = 0;
                 array<int> links = {};
                 for(uint i = 0; i < landmarks.Length; i++) {
@@ -164,8 +163,6 @@ namespace FS {
                 personalBestRun = Race();
             }
 
-            
-            _inGame = true;
         }
 
 
@@ -212,7 +209,8 @@ namespace FS {
             if (_handledRespawn && post != CSmScriptPlayer::EPost::Char && ui_sequence == CGamePlaygroundUIConfig::EUISequence::Playing){
                 _handledRespawn = false;
             }
-
+            
+            // only count reset fails while sequence is Playing
             if (ui_sequence != CGamePlaygroundUIConfig::EUISequence::Playing){
                 _skipResetFail = true;
             }
@@ -313,10 +311,9 @@ namespace FS {
     void write_json(){
         if (setting_general_enableLogging){print('Saving file...');}
         string currentMap = get_mapId();
-        string jsonPath = folder + currentMap + ".json";
-        if (!IO::FolderExists(folder)) {
-            IO::CreateFolder(folder);
-        }
+        // string jsonPath = folder + currentMap + ".json";
+        string jsonPath = IO::FromStorageFolder(currentMap + ".json");
+
 
         Json::Value jsonData = Json::Object();
 
@@ -334,11 +331,9 @@ namespace FS {
 
     bool read_json(){
         string currentMap = get_mapId();
-        string jsonPath = folder + currentMap + ".json";
+        string jsonPath = IO::FromStorageFolder(currentMap + ".json");
+        //string jsonPath = folder + currentMap + ".json";
         
-        if (!IO::FolderExists(folder)) {
-            IO::CreateFolder(folder);
-        }
 
         bool firstLoad = !IO::FileExists(jsonPath);
 
